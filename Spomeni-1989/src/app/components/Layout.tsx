@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { Outlet, NavLink } from "react-router";
+import { Menu, X } from "lucide-react";
 
 export function Layout() {
+  const [isOpen, setIsOpen] = useState(false);
+
   const navItems = [
     { path: "/", label: "Начало" },
     { path: "/daily-life", label: "Ежедневие" },
@@ -16,9 +20,13 @@ export function Layout() {
       {/* Navigation */}
       <nav className="border-b border-[#4a443d] bg-[#1f1b17]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4">
-          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between gap-4">
-            <div className="text-sm tracking-[0.15em] opacity-60 text-center sm:text-left w-full sm:w-auto">ИСТОРИЧЕСКИ АРХИВ</div>
-            <div className="flex flex-wrap justify-center sm:justify-end gap-x-4 gap-y-2 md:gap-6 w-full sm:w-auto">
+          <div className="flex items-center justify-between">
+            <div className="text-sm tracking-[0.15em] opacity-60 font-medium z-20">
+              ИСТОРИЧЕСКИ АРХИВ
+            </div>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex flex-wrap justify-end gap-6 items-center">
               {navItems.map((item) => (
                 <NavLink
                   key={item.path}
@@ -26,6 +34,42 @@ export function Layout() {
                   end={item.path === "/"}
                   className={({ isActive }) =>
                     `text-sm tracking-wide transition-colors ${
+                      isActive ? "text-[#d4af37]" : "text-[#b8b5b0] hover:text-[#e8e6e3]"
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="flex lg:hidden z-20 relative">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-[#b8b5b0] hover:text-[#e8e6e3] focus:outline-none transition-colors p-1"
+                aria-label="Toggle menu"
+              >
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation Dropdown */}
+          <div 
+            className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+              isOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="flex flex-col space-y-4 pb-4 pt-2 border-t border-[#4a443d]">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  end={item.path === "/"}
+                  onClick={() => setIsOpen(false)}
+                  className={({ isActive }) =>
+                    `block text-base tracking-wide transition-colors ${
                       isActive ? "text-[#d4af37]" : "text-[#b8b5b0] hover:text-[#e8e6e3]"
                     }`
                   }
